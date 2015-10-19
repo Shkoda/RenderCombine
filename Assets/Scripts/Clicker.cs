@@ -6,51 +6,39 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
-  public  class Clicker : MonoBehaviour
-  {
+    public class Clicker : MonoBehaviour
+    {
+        private int _textureHeight;
+        private int _textureWidth;
+        public Dictionary<Rect, GameObject> ClickMap { get; set; }
 
-      private Dictionary<Rect, GameObject> _clickMap;
-      public Dictionary<Rect, GameObject> ClickMap
-      {
-          get { return _clickMap; }
-          set
-          {
-              _clickMap = value;
-              foreach (var key in _clickMap.Keys)
-              {
-                  Debug.LogWarning(string.Format("({0}, {1}) w={2} h={3} --- {4}", key.x, key.y, key.width, key.height, _clickMap[key].name));
-              }
-          }
-      }
+        private void Start()
+        {
+            var mainTexture = gameObject.GetComponent<Renderer>().material.mainTexture;
+            _textureWidth = mainTexture.width;
+            _textureHeight = mainTexture.height;
+        }
 
-      private GameObject FindOwner(Vector2 textureCoordinate)
-      {
-          var textureRectangle = ClickMap.Keys.FirstOrDefault(rect => rect.Contains(textureCoordinate));
-          return ClickMap[textureRectangle];
-      }
+        private GameObject FindOwner(Vector2 textureCoordinate)
+        {
+            var textureRectangle = ClickMap.Keys.FirstOrDefault(rect => rect.Contains(textureCoordinate));
+            return ClickMap[textureRectangle];
+        }
 
 
-      public void OnMouseDown()
+        public void OnMouseDown()
         {
             RaycastHit hit;
-            if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
-                return;
+            Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit);             
 
-            Renderer renderer = hit.collider.GetComponent<Renderer>();
-       
-   
-//            Texture2D tex = (Texture2D)renderer.material.mainTexture;
             Vector2 pixelUV = hit.textureCoord;
 
-          var point = new Vector2((int) (pixelUV.x*renderer.material.mainTexture.width),
-              (pixelUV.y*renderer.material.mainTexture.height));
+            var point = new Vector2((int) (pixelUV.x*_textureWidth),
+                (pixelUV.y*_textureHeight));
 
-          var owner = FindOwner(point);
+            var owner = FindOwner(point);
 
-            Debug.Log(string.Format("{0} clicked on ({1}  {2})", owner.name,point.x, point.y));
-
-//            print((int)(pixelUV.x * renderer.material.mainTexture.width) + "--" + (int)(pixelUV.y * renderer.material.mainTexture.height));
-
+            Debug.Log(string.Format("{0} clicked on ({1}  {2})", owner.name, point.x, point.y));
         }
     }
 }

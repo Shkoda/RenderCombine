@@ -70,8 +70,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\AtlasBuilder.cs" />
     <Compile Include="Assets\Scripts\Blender.cs" />
     <Compile Include="Assets\Scripts\Clicker.cs" />
+    <Compile Include="Assets\Scripts\MaterialBuilder.cs" />
+    <Compile Include="Assets\Scripts\ObjectFromMeshesBuilder.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
