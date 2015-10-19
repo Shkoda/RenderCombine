@@ -18,7 +18,8 @@ namespace Assets.Scripts
             MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
 
 
-            int uniqueTexturesCount = CountMeshesWithUniqueTextures(meshFilters);
+//            int uniqueTexturesCount = CountMeshesWithUniqueTextures(meshFilters);
+            int uniqueTexturesCount = meshFilters.Length;
             int tileCount = Mathf.CeilToInt(Mathf.Sqrt(uniqueTexturesCount));
             var tilePixels = AtlasResolution / tileCount;
             var scale = 1.0f / tileCount;
@@ -90,7 +91,7 @@ namespace Assets.Scripts
         }
 
 
-        /// <returns>key - textureID, value - offset Vector2D on atlas</returns>
+        /// <returns>key - instanceId, value - offset Vector2D on atlas</returns>
         private static Dictionary<int, Vector2> DefineTexturesOffset(MeshFilter[] meshFilters, int tileCount)
         {
             var offsets = new Dictionary<int, Vector2>();
@@ -98,11 +99,14 @@ namespace Assets.Scripts
 
             foreach (var meshFilter in meshFilters)
             {
+                var instanceId = meshFilter.gameObject.GetInstanceID();
+
                 var texture = meshFilter.GetComponent<Renderer>().material.mainTexture as Texture2D;
                 var textureId = texture.GetInstanceID();
 
                 var offset = new Vector2(tileX / (float)tileCount, tileY / (float)tileCount);
-                offsets[textureId] = offset;
+//                offsets[textureId] = offset;
+                offsets[instanceId] = offset;
 
                 tileX += 1;
                 if (tileX >= tileCount)
@@ -132,7 +136,8 @@ namespace Assets.Scripts
 
                 if (meshFilter.GetComponent<Renderer>().material.mainTexture != null)
                 {
-                    var tid = meshFilter.GetComponent<Renderer>().material.mainTexture.GetInstanceID();
+//                    var tid = meshFilter.GetComponent<Renderer>().material.mainTexture.GetInstanceID();
+                    var tid = meshFilter.gameObject.GetInstanceID();
                     Debug.Log("Searching for " + tid);
                     var offset = offsets[tid];
 

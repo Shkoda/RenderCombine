@@ -42,10 +42,12 @@ namespace Assets.Scripts
 //            Texture2D tex = (Texture2D)renderer.material.mainTexture;
             Vector2 pixelUV = hit.textureCoord;
 
-          var owner = FindOwner(new Vector2((int) (pixelUV.x*renderer.material.mainTexture.width),
-              (pixelUV.y*renderer.material.mainTexture.height)));
+          var point = new Vector2((int) (pixelUV.x*renderer.material.mainTexture.width),
+              (pixelUV.y*renderer.material.mainTexture.height));
 
-            Debug.Log(owner.name+" clicked");
+          var owner = FindOwner(point);
+
+            Debug.Log(string.Format("{0} clicked on ({1}  {2})", owner.name,point.x, point.y));
 
 //            print((int)(pixelUV.x * renderer.material.mainTexture.width) + "--" + (int)(pixelUV.y * renderer.material.mainTexture.height));
 
