@@ -1,0 +1,4 @@
+*.log
+*conflicted copy*
+target*
+UnityLockfile
