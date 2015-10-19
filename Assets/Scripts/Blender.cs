@@ -17,21 +17,26 @@ namespace Assets.Scripts
             var combinedObject = BuildBaseEmptyObject();
             MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
 
+
             int uniqueTexturesCount = CountMeshesWithUniqueTextures(meshFilters);
             int tileCount = Mathf.CeilToInt(Mathf.Sqrt(uniqueTexturesCount));
             var tilePixels = AtlasResolution / tileCount;
-            var scale = tilePixels / (float)AtlasResolution;
+            var scale = 1.0f / tileCount;
 
             var backupUv = BackupUV(meshFilters);
             UpdateUVInMeshes(meshFilters, scale, tileCount);
             CombineMeshesIntoObject(meshFilters, combinedObject);
             RestoreFromBackup(meshFilters, backupUv);
 
-            Material material = MakeMaterial(meshFilters, 256, tileCount, tilePixels);
+            Material material = MakeMaterial(meshFilters, AtlasResolution, tileCount, tilePixels);
             combinedObject.GetComponent<Renderer>().material = material;
 
             combinedObject.transform.position += Vector3.right * 3;
+            combinedObject.AddComponent<MeshCollider>();
+            combinedObject.AddComponent<Clicker>().ClickMap = MapObjects(meshFilters, tileCount, tilePixels);
         }
+
+   
 
 
 
@@ -63,6 +68,25 @@ namespace Assets.Scripts
             }
             atlas.Apply();
             return atlas;
+        }
+
+        private static Dictionary<Rect, GameObject> MapObjects(MeshFilter[] meshFilters, int tileCount, int tilePixels)
+        {
+            int tileX = 0, tileY = 0;
+            Dictionary<Rect, GameObject> map = new Dictionary<Rect, GameObject>();
+            foreach (var meshFilter in meshFilters)
+            {
+
+                Rect rect = new Rect(tileX * tilePixels, tileY * tilePixels, tilePixels, tilePixels);
+                map.Add(rect, meshFilter.gameObject);
+                tileX += 1;
+                if (tileX >= tileCount)
+                {
+                    tileX = 0;
+                    tileY += 1;
+                }
+            }
+            return map;
         }
 
 
